@@ -5,6 +5,11 @@
 #include <cmath>
 #include <vector>
 
+
+#include <GL/gl.h>
+#include <GL/glew.h>
+
+
 class SphereWidget : public QOpenGLWidget, protected QOpenGLFunctions {
 private:
     QOpenGLShaderProgram program;
