@@ -1,13 +1,14 @@
 #include <QApplication>
-#include <QOpenGLWidget>
+#include <QOpenGLWindow>
 #include <QOpenGLFunctions>
 #include <QOpenGLShaderProgram>
 #include <cmath>
 #include <vector>
 
 
-#include <GL/gl.h>
+
 #include <GL/glew.h>
+#include <GL/gl.h>
 
 
 class SphereWidget : public QOpenGLWidget, protected QOpenGLFunctions {
