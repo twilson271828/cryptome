@@ -1,3 +1,6 @@
+//#include <GL/glew.h>
+//#include <GL/gl.h>
+
 #include <QApplication>
 #include <QOpenGLWindow>
 #include <QOpenGLFunctions>
@@ -7,8 +10,6 @@
 
 
 
-#include <GL/glew.h>
-#include <GL/gl.h>
 
 
 class SphereWidget : public QOpenGLWidget, protected QOpenGLFunctions {
