@@ -19,7 +19,8 @@ add_executable(SphereWidget sphere.cpp)
 # Include directories
 target_include_directories(SphereWidget PRIVATE ${Qt6Core_INCLUDE_DIRS} ${Qt6Gui_INCLUDE_DIRS} ${Qt6Widgets_INCLUDE_DIRS} ${Qt6OpenGL_INCLUDE_DIRS} ${GLEW_INCLUDE_DIRS})
 
-message(STATUS "Qt6OpenGL_INCLUDE_DIRS: ${Qt6OpenGL_INCLUDE_DIRS}")
+#message(STATUS "Qt6OpenGLWidgets_INCLUDE_DIRS: ${Qt6OpenGLWidgets_INCLUDE_DIRS}")
+#message(STATUS "Qt6Widgets_INCLUD_DIRS:  ${Qt6Widgets_INCLUDE_DIRS}")
 
 
 # Link libraries
