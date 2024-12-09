@@ -1,7 +1,7 @@
 #include <QApplication>
 #include <QOpenGLContext>
 #include <QtOpenGLWidgets/QOpenGLWidget>
-#include <QOpenGLFunctions>
+#include <QOpenGLFunctions_4_5_Core>
 #include <QTimer>
 #include <QMatrix4x4>
 #include <QtMath>
