@@ -9,9 +9,11 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 # Find required packages
 
-find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets OpenGL)
+# Qt6
+find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets OpenGL OpenGLWidgets)
 find_package(OpenGL REQUIRED)
 find_package(GLEW REQUIRED)
+set(CMAKE_AUTOMOC ON)
 
 # Add the executable
 add_executable(sphere sphere.cpp)
@@ -24,4 +26,4 @@ target_include_directories(sphere PRIVATE ${Qt6Core_INCLUDE_DIRS} ${Qt6Gui_INCLU
 
 
 # Link libraries
-target_link_libraries(sphere PRIVATE Qt6::Core Qt6::Gui Qt6::Widgets Qt6::OpenGL OpenGL::GL GLEW::GLEW)
+target_link_libraries(sphere PRIVATE Qt6::Core Qt6::Gui Qt6::Widgets Qt6::OpenGL Qt6::OpenGLWidgets OpenGL::GL GLEW::GLEW)

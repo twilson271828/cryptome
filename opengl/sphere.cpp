@@ -1,6 +1,7 @@
 #include <QApplication>
 #include <QOpenGLContext>
-#include <QtOpenGLWidgets/QOpenGLWidget>
+//#include <QtOpenGLWidgets/QOpenGLWidget>
+#include <QOpenGLWidget>
 #include <QOpenGLFunctions_4_5_Core>
 #include <QTimer>
 #include <QMatrix4x4>
@@ -100,3 +101,4 @@ int main(int argc, char *argv[]) {
 
     return app.exec();
 }
+#include "sphere.moc"
