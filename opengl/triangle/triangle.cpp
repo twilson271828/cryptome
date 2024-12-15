@@ -7,6 +7,26 @@
 #include <QMatrix4x4>
 #include <QtMath>
 
+#include <iostream>
+
+const unsigned int SCR_WIDTH = 800;
+const unsigned int SCR_HEIGHT = 600;
+
+const char *vertexShaderSource = "#version 330 core\n"
+    "layout (location = 0) in vec3 aPos;\n"
+    "void main()\n"
+    "{\n"
+    "   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
+    "}\0";
+const char *fragmentShaderSource = "#version 330 core\n"
+    "out vec4 FragColor;\n"
+    "void main()\n"
+    "{\n"
+    "   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
+    "}\n\0";
+
+
+
 class triangle : public QOpenGLWidget, protected QOpenGLFunctions_4_5_Core {
     Q_OBJECT
     
@@ -14,16 +34,7 @@ class triangle : public QOpenGLWidget, protected QOpenGLFunctions_4_5_Core {
 public:
     triangle(QWidget *parent = nullptr) : QOpenGLWidget(parent), angle(0.0f) {
 
-        
-        // Timer to update rotation
-        QTimer *timer = new QTimer(this);
-        connect(timer, &QTimer::timeout, this, [this]() {
-            angle += 1.0f;
-            if (angle >= 360.0f)
-                angle -= 360.0f;
-            update();
-        });
-        timer->start(16); // ~60 FPS
+     
     }
 
 protected:
@@ -32,6 +43,33 @@ protected:
 
         // Enable depth testing
         glEnable(GL_DEPTH_TEST);
+        // build and compile our shader program
+        // ------------------------------------
+        // vertex shader
+        unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
+        glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
+        glCompileShader(vertexShader);
+
+    // check for shader compile errors
+    int success;
+    char infoLog[512];
+    glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
+    if (!success)
+    {
+        glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
+        std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
+    }
+    // fragment shader
+    unsigned int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+    glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
+    glCompileShader(fragmentShader);
+    // check for shader compile errors
+    glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
+    if (!success)
+    {
+        glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
+        std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
+    }
 
         // Generate a Vertex Array Object
         glGenVertexArrays(1, &vao);
@@ -68,8 +106,8 @@ private:
 
     void draw(float radius, int slices, int stacks) {
         }
-    }
-};
+    };
+
 
 int main(int argc, char *argv[]) {
     QApplication app(argc, argv);
