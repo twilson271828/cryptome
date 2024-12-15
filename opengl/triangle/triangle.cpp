@@ -33,6 +33,8 @@ class triangle : public QOpenGLWidget, protected QOpenGLFunctions_4_5_Core {
 private:  
     unsigned int fragmentShader;
     unsigned int vertexShader;
+    unsigned int shaderProgram;
+    float vertices[];
 
 public:
     triangle(QWidget *parent = nullptr) : QOpenGLWidget(parent) {
@@ -47,6 +49,13 @@ public:
     // check for shader compile errors
     int success;
     char infoLog[512];
+
+    vertices = {
+        -0.5f, -0.5f, 0.0f, // left  
+         0.5f, -0.5f, 0.0f, // right 
+         0.0f,  0.5f, 0.0f  // top   
+    }; 
+
     glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
     if (!success)
     {
@@ -65,6 +74,21 @@ public:
         std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
     }
 
+
+    
+     // link shaders
+    shaderProgram = glCreateProgram();
+    glAttachShader(shaderProgram, vertexShader);
+    glAttachShader(shaderProgram, fragmentShader);
+    glLinkProgram(shaderProgram);
+    // check for linking errors
+    glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
+    if (!success) {
+        glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
+        std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
+    }
+    glDeleteShader(vertexShader);
+    glDeleteShader(fragmentShader);
      
     }
 
@@ -75,6 +99,9 @@ protected:
         // Enable depth testing
         glEnable(GL_DEPTH_TEST);
       
+        // set up vertex data (and buffer(s)) and configure vertex attributes
+    // ------------------------------------------------------------------
+    
 
         // Generate a Vertex Array Object
         glGenVertexArrays(1, &vao);
