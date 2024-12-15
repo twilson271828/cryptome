@@ -30,20 +30,14 @@ const char *fragmentShaderSource = "#version 330 core\n"
 class triangle : public QOpenGLWidget, protected QOpenGLFunctions_4_5_Core {
     Q_OBJECT
     
+private:  
+    unsigned int fragmentShader;
+    unsigned int vertexShader;
 
 public:
-    triangle(QWidget *parent = nullptr) : QOpenGLWidget(parent), angle(0.0f) {
+    triangle(QWidget *parent = nullptr) : QOpenGLWidget(parent) {
 
-     
-    }
-
-protected:
-    void initializeGL() override {
-        initializeOpenGLFunctions();
-
-        // Enable depth testing
-        glEnable(GL_DEPTH_TEST);
-        // build and compile our shader program
+          // build and compile our shader program
         // ------------------------------------
         // vertex shader
         unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
@@ -60,7 +54,7 @@ protected:
         std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
     }
     // fragment shader
-    unsigned int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+    fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
     glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
     glCompileShader(fragmentShader);
     // check for shader compile errors
@@ -70,6 +64,17 @@ protected:
         glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
         std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
     }
+
+     
+    }
+
+protected:
+    void initializeGL() override {
+        initializeOpenGLFunctions();
+
+        // Enable depth testing
+        glEnable(GL_DEPTH_TEST);
+      
 
         // Generate a Vertex Array Object
         glGenVertexArrays(1, &vao);
