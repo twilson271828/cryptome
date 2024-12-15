@@ -34,7 +34,7 @@ private:
     unsigned int fragmentShader;
     unsigned int vertexShader;
     unsigned int shaderProgram;
-    float vertices[];
+    
 
 public:
     triangle(QWidget *parent = nullptr) : QOpenGLWidget(parent) {
@@ -50,7 +50,7 @@ public:
     int success;
     char infoLog[512];
 
-    vertices = {
+    float vertices[] = {
         -0.5f, -0.5f, 0.0f, // left  
          0.5f, -0.5f, 0.0f, // right 
          0.0f,  0.5f, 0.0f  // top   
