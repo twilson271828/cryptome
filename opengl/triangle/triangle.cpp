@@ -73,8 +73,6 @@ public:
         glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
         std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
     }
-
-
     
      // link shaders
     shaderProgram = glCreateProgram();
@@ -106,6 +104,9 @@ protected:
         // Generate a Vertex Array Object
         glGenVertexArrays(1, &vao);
         glBindVertexArray(vao);
+
+        // uncomment this call to draw in wireframe polygons.
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     }
 
     void resizeGL(int w, int h) override {
