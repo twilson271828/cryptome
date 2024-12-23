@@ -26,7 +26,6 @@ const char *fragmentShaderSource = "#version 330 core\n"
     "}\n\0";
 
 
-
 class triangle : public QOpenGLWidget, protected QOpenGLFunctions_4_5_Core {
     Q_OBJECT
     
@@ -34,8 +33,17 @@ private:
     unsigned int fragmentShader;
     unsigned int vertexShader;
     unsigned int shaderProgram;
-    float vertices[9];
-     unsigned int indices[6];
+    unsigned int VBO, VAO, EBO; 
+    float vertices[9]= {
+        -0.5f, -0.5f, 0.0f, // left  
+         0.5f, -0.5f, 0.0f, // right 
+         0.0f,  0.5f, 0.0f  // top   
+    };
+    unsigned int indices[6] ={  
+                 // note that we start from 0!
+        0, 1, 3, // first Triangle
+        1, 2, 3  // second Triangle
+    };
     
 
 public:
@@ -52,17 +60,6 @@ public:
     int success;
     char infoLog[512];
 
-    float vertices[] = {
-        -0.5f, -0.5f, 0.0f, // left  
-         0.5f, -0.5f, 0.0f, // right 
-         0.0f,  0.5f, 0.0f  // top   
-    };
-
-    unsigned int indices[] = {  // note that we start from 0!
-        0, 1, 3,  // first Triangle
-        1, 2, 3   // second Triangle
-    };
-    unsigned int VBO, VAO, EBO; 
 
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
@@ -89,8 +86,6 @@ public:
     // VAOs requires a call to glBindVertexArray anyways so we generally don't unbind VAOs (nor VBOs) when it's not directly necessary.
     glBindVertexArray(0); 
 
-
-    
     glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
     if (!success)
     {
@@ -159,12 +154,16 @@ protected:
 
         QMatrix4x4 mvp = projection * model;
 
-        // Set up basic rendering (no shaders in this example, uses fixed pipeline)
-        glMatrixMode(GL_MODELVIEW);
-        glLoadMatrixf(mvp.constData());
+        // render
+        // ------
+        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
 
-        // Render triangle
-        draw(1.0f, 30, 30);
+        // draw our first triangle
+        glUseProgram(shaderProgram);
+        glBindVertexArray(VAO); // seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+
     }
 
 private:
@@ -172,8 +171,7 @@ private:
     float angle;
     QMatrix4x4 projection;
 
-    void draw(float radius, int slices, int stacks) {
-        }
+    
     };
 
 
