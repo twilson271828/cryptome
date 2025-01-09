@@ -1,5 +1,5 @@
 # Generated from cube.pro.
-
+# Using Qt version 6.2.4
 cmake_minimum_required(VERSION 3.16)
 project(cube LANGUAGES CXX)
 
