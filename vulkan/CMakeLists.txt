@@ -11,5 +11,5 @@ include_directories(${Vulkan_INCLUDE_DIRS})
 include_directories(${GLFW_INCLUDE_DIRS})
 include_directories(${GLM_INCLUDE_DIRS})
 
-add_executable(BouncingSpheres main.cpp)
-target_link_libraries(BouncingSpheres Vulkan::Vulkan glfw glm)
+add_executable(BouncingSpheres vulkan3d.cpp)
+target_link_libraries(BouncingSpheres Vulkan::Vulkan glfw )

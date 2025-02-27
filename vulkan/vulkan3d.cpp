@@ -2,11 +2,12 @@
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-#include <tiny_obj_loader.h>
 #include <vector>
 #include <iostream>
 #include <deque>
 #include <vulkan/vulkan.h>
+
+#include "tiny_obj_loader.h"
 
 const int WIDTH = 800;
 const int HEIGHT = 600;
