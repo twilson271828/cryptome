@@ -68,6 +68,40 @@ void updatePhysics() {
 
 void render() {
     // Placeholder: Implement Vulkan rendering of spheres and trails here
+    VkCommandBuffer commandBuffer; // Assume commandBuffer is properly initialized
+
+    VkClearValue clearColor = {0.0f, 0.0f, 0.0f, 1.0f};
+    VkRenderPassBeginInfo renderPassInfo{};
+    renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+    renderPassInfo.renderPass = renderPass;
+    renderPassInfo.framebuffer = framebuffer; // Assume framebuffer is properly initialized
+    renderPassInfo.renderArea.offset = {0, 0};
+    renderPassInfo.renderArea.extent = {WIDTH, HEIGHT};
+    renderPassInfo.clearValueCount = 1;
+    renderPassInfo.pClearValues = &clearColor;
+
+    vkCmdBeginRenderPass(commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+
+    vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline);
+
+    for (const auto& sphere : spheres) {
+        // Bind vertex buffer, index buffer, and descriptor sets for each sphere
+        // Assume vertexBuffer, indexBuffer, and descriptorSets are properly initialized
+        VkBuffer vertexBuffers[] = {vertexBuffer};
+        VkDeviceSize offsets[] = {0};
+        vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
+        vkCmdBindIndexBuffer(commandBuffer, indexBuffer, 0, VK_INDEX_TYPE_UINT32);
+        vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &descriptorSets, 0, nullptr);
+
+        // Draw the sphere
+        vkCmdDrawIndexed(commandBuffer, indexCount, 1, 0, 0, 0); // Assume indexCount is properly initialized
+    }
+
+    vkCmdEndRenderPass(commandBuffer);
+
+    if (vkEndCommandBuffer(commandBuffer) != VK_SUCCESS) {
+        throw std::runtime_error("Failed to record command buffer!");
+    }
 }
 
 void mainLoop() {
