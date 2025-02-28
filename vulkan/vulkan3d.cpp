@@ -32,6 +32,12 @@ VkDevice device;
 VkQueue graphicsQueue;
 VkRenderPass renderPass;
 VkPipeline graphicsPipeline;
+VkFramebuffer framebuffer;
+VkBuffer vertexBuffer;
+VkBuffer indexBuffer;
+VkPipelineLayout pipelineLayout;
+VkDescriptorSet descriptorSets;
+uint32_t indexCount;
 
 void initVulkan() {
     VkApplicationInfo appInfo{};
