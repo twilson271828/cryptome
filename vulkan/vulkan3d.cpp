@@ -28,16 +28,95 @@ std::vector<Sphere> spheres = {
 
 VkInstance instance;
 VkSurfaceKHR surface;
+VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
 VkDevice device;
 VkQueue graphicsQueue;
 VkRenderPass renderPass;
 VkPipeline graphicsPipeline;
-VkFramebuffer framebuffer;
-VkBuffer vertexBuffer;
-VkBuffer indexBuffer;
-VkPipelineLayout pipelineLayout;
-VkDescriptorSet descriptorSets;
+VkFramebuffer framebuffer = VK_NULL_HANDLE;
+VkBuffer vertexBuffer = VK_NULL_HANDLE;
+VkBuffer indexBuffer = VK_NULL_HANDLE;
+VkPipelineLayout pipelineLayout = VK_NULL_HANDLE;
+VkDescriptorSet descriptorSets = VK_NULL_HANDLE;
+VkCommandBuffer commandBuffer = VK_NULL_HANDLE;
+VkCommandPool commandPool = VK_NULL_HANDLE;
+
+void createCommandPool() {
+    VkCommandPoolCreateInfo poolInfo{};
+    poolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
+    poolInfo.queueFamilyIndex = 0; // Assume graphics queue family index is 0
+    poolInfo.flags = 0;
+
+    if (vkCreateCommandPool(device, &poolInfo, nullptr, &commandPool) != VK_SUCCESS) {
+        throw std::runtime_error("Failed to create command pool!");
+    }
+}
+
+void createCommandBuffer() {
+    VkCommandBufferAllocateInfo allocInfo{};
+    allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+    allocInfo.commandPool = commandPool;
+    allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+    allocInfo.commandBufferCount = 1;
+
+    if (vkAllocateCommandBuffers(device, &allocInfo, &commandBuffer) != VK_SUCCESS) {
+        throw std::runtime_error("Failed to allocate command buffer!");
+    }
+}
+
+void beginCommandBuffer() {
+    VkCommandBufferBeginInfo beginInfo{};
+    beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+    beginInfo.flags = VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT;
+
+    if (vkBeginCommandBuffer(commandBuffer, &beginInfo) != VK_SUCCESS) {
+        throw std::runtime_error("Failed to begin recording command buffer!");
+    }
+}
+
+
 uint32_t indexCount;
+void pickPhysicalDevice() {
+    uint32_t deviceCount = 0;
+    vkEnumeratePhysicalDevices(instance, &deviceCount, nullptr);
+    if (deviceCount == 0) {
+        throw std::runtime_error("Failed to find GPUs with Vulkan support!");
+    }
+    std::vector<VkPhysicalDevice> devices(deviceCount);
+    vkEnumeratePhysicalDevices(instance, &deviceCount, devices.data());
+    for (const auto& dev : devices) {
+        if (true) { // Add suitable device selection criteria here
+            physicalDevice = dev;
+            break;
+        }
+    }
+    if (physicalDevice == VK_NULL_HANDLE) {
+        throw std::runtime_error("Failed to find a suitable GPU!");
+    }
+}
+
+void createLogicalDevice() {
+    VkDeviceQueueCreateInfo queueCreateInfo{};
+    queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+    queueCreateInfo.queueFamilyIndex = 0; // Assume graphics queue family index is 0
+    queueCreateInfo.queueCount = 1;
+    float queuePriority = 1.0f;
+    queueCreateInfo.pQueuePriorities = &queuePriority;
+
+    VkPhysicalDeviceFeatures deviceFeatures{};
+
+    VkDeviceCreateInfo createInfo{};
+    createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+    createInfo.pQueueCreateInfos = &queueCreateInfo;
+    createInfo.queueCreateInfoCount = 1;
+    createInfo.pEnabledFeatures = &deviceFeatures;
+
+    if (vkCreateDevice(physicalDevice, &createInfo, nullptr, &device) != VK_SUCCESS) {
+        throw std::runtime_error("Failed to create logical device!");
+    }
+
+    vkGetDeviceQueue(device, 0, 0, &graphicsQueue);
+}
 
 void initVulkan() {
     VkApplicationInfo appInfo{};
@@ -55,7 +134,11 @@ void initVulkan() {
     if (vkCreateInstance(&createInfo, nullptr, &instance) != VK_SUCCESS) {
         throw std::runtime_error("Failed to create Vulkan instance!");
     }
+
+    pickPhysicalDevice();
+    createLogicalDevice();
 }
+
 
 void updatePhysics() {
     for (auto &sphere : spheres) {
@@ -72,9 +155,8 @@ void updatePhysics() {
     }
 }
 
-void render() {
+void render(VkCommandBuffer commandBuffer) {
     // Placeholder: Implement Vulkan rendering of spheres and trails here
-    VkCommandBuffer commandBuffer; // Assume commandBuffer is properly initialized
 
     VkClearValue clearColor = {0.0f, 0.0f, 0.0f, 1.0f};
     VkRenderPassBeginInfo renderPassInfo{};
@@ -110,23 +192,27 @@ void render() {
     }
 }
 
-void mainLoop() {
+
+void mainLoop(VkCommandBuffer commandBuffer) {
     while (true) {
         updatePhysics();
-        render();
+        render(commandBuffer);
     }
 }
-
 int main() {
     glfwInit();
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
     GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Bouncing Spheres", nullptr, nullptr);
 
     initVulkan();
+    createCommandPool();
+    createCommandBuffer();
+    beginCommandBuffer();
 
+    mainLoop(commandBuffer);
     while (!glfwWindowShouldClose(window)) {
         glfwPollEvents();
-        mainLoop();
+        mainLoop(commandBuffer);
     }
 
     vkDestroyPipeline(device, graphicsPipeline, nullptr);
