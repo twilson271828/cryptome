@@ -358,14 +358,14 @@ void updatePhysics() {
     }
 }
 
-void render(VkCommandBuffer commandBuffer) {
+void render(VkCommandBuffer commandBuffer,size_t currentFrame) {
     // Placeholder: Implement Vulkan rendering of spheres and trails here
 
     VkClearValue clearColor = {0.0f, 0.0f, 0.0f, 1.0f};
     VkRenderPassBeginInfo renderPassInfo{};
     renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
     renderPassInfo.renderPass = renderPass;
-    renderPassInfo.framebuffer = framebuffer; // Assume framebuffer is properly initialized
+    renderPassInfo.framebuffer = framebuffers[currentFrame]; 
     renderPassInfo.renderArea.offset = {0, 0};
     renderPassInfo.renderArea.extent = {WIDTH, HEIGHT};
     renderPassInfo.clearValueCount = 1;
@@ -397,9 +397,11 @@ void render(VkCommandBuffer commandBuffer) {
 
 
 void mainLoop(VkCommandBuffer commandBuffer) {
+    size_t currentFrame = 0;
     while (true) {
         updatePhysics();
-        render(commandBuffer);
+        render(commandBuffer,currentFrame);
+        currentFrame = (currentFrame + 1) % framebuffers.size();
     }
 }
 int main() {
