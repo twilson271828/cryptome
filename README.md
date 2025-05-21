@@ -1,2 +1,2 @@
 # cryptome
-A dumping ground for useful Python code that I have used on other projects
+A dumping ground for useful Python/C++ code that I have used on other projects
